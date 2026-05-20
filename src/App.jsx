@@ -1,122 +1,82 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [board, setBoard] = useState([null,null,null,
+    null,null,null,
+    null,null,null]);
+
+      const [winner, setWinner] = useState(null)
+      const [status, setStatus] = useState("Next Player: ")
+    const copyBoard = [...board];
+let [currentPlayer, setCurrentPlayer] = useState(true);
+
+const gewinnenKombo = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2, 5, 8], [0,4,8], [2,4,6]]
+
+    const handleClick = (index)=>{
+      const shadowBoard = [...board]
+         if(shadowBoard[index] || winner)return;
+   currentPlayer?  shadowBoard[index] = "X":  shadowBoard[index] = "O";
+    setCurrentPlayer(!currentPlayer);
+    setBoard(shadowBoard)
+    handleWinner(shadowBoard)
+    }
+
+
+
+    const handleWinner = copyB => {
+      for(let i =0; i < gewinnenKombo.length; i++){
+        const [a,b,c] = gewinnenKombo[i]; 
+         if(copyB[a]){
+            if(copyB[a] === copyB[b] && copyB[a] === copyB[c]){
+          setWinner(copyB[a]);
+          return
+         }
+      
+      }
+     
+    }
+    const isDraw = copyB.every(square => square !== null );
+
+if(isDraw){
+  setWinner("tie");
+  return;
+}
+     return
+    }
+
+
+
+    const handleResetBtn = ()=>{
+ setBoard([null,null,null,
+    null,null,null,
+    null,null,null]);
+    setWinner(null)
+    }
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <div className="game-container">
+        <h1>Tic-Tac-Toe</h1>
+         <div className="status">
+         { 
+         
+         winner === "tie"? "It's a draw!":
+         winner? `Winner: ${winner}`: `${status} ${currentPlayer? 'X' : 'O'}  `}
+          
+          </div>
+         <div className="board">
+ {     board.map((value, index) => (
+<button key={index} className="square"  onClick={()=>handleClick(index)}>{value} </button>
+      ))
+      }
+      </div>
+        <button className="reset-btn" onClick={()=>handleResetBtn()}>Reset Game</button>
+      </div>
     </>
   )
+  
 }
-
+//
 export default App
